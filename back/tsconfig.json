@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "rootDir": "./",
+    "outDir": "./build",
+    "target": "ESNext",
+    "types": ["jest", "node"],
+    "lib": ["DOM", "ESNext"],
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true,
+    "declaration": true,
+    // "noEmit": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    // "noImplicitAny": true,
+    // "strictNullChecks": true,
+    "skipLibCheck": true,
+    /* fastify typeorm settings */
+    "strictPropertyInitialization": false,
+    "experimentalDecorators": true,
+    // "typeRoots": ["types"],
+    "emitDecoratorMetadata": true
+  },
+  "include": ["src/**/*", "__tests__/**/*"],
+  "exclude": ["**/node_modules/*", "build"]
+  // "extends": "@tsconfig/node18/tsconfig.json"
+}

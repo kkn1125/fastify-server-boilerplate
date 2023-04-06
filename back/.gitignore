@@ -1,0 +1,12 @@
+node_modules/
+.env*
+
+*lock*
+\[x\]*
+# id_rsa*
+certs/
+output/
+.postman
+
+build/
+test/

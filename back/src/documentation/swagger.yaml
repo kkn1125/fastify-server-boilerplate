@@ -1,0 +1,5368 @@
+openapi: 3.0.0
+info:
+  title: Medience
+  description: 메디앙스에 사용되는 API 문서입니다.
+  version: 1.0.0
+servers:
+  - url: http://{{api}}
+tags:
+  - name: v1
+    description: API 버전 1
+  - name: v1 > User
+    description: 사용자 객체 API
+  - name: v1 > Board
+    description: 게시글 객체 API
+  - name: v1 > Banned_word
+    description: 채팅 금지어 객체 API
+  - name: v1 > Avatar
+    description: 사용자의 아바타 객체 API
+  - name: v1 > Items
+    description: 게임 내에서 사용되는 아바타 착용의상 아이템 객체 API
+  - name: v1 > MyItem
+    description: 사용자가 가진 아이템 객체 API
+  - name: v1 > Setting
+    description: 사용자의 음량, 튜토리얼 객체 API
+  - name: v1 > Terms
+    description: 사용자 이용약관 객체 API
+  - name: v1 > Pregnancy
+    description: 사용자의 임신여부 정보 객체 API
+  - name: v1 > Children
+    description: 사용자의 자녀 객체 API
+  - name: v1 > Classroom
+    description: 교실 객체 API
+  - name: v1 > ClassMate
+    description: 교실 신청 객체 API
+  - name: v1 > PathInfo
+    description: 사용자의 경로 정보 API
+paths:
+  /validateToken:
+    get:
+      tags:
+        - v1 > User
+      summary: /api/validateToken
+      description: jwt 토큰 검증
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '36'
+            Date:
+              schema:
+                type: string
+                example: Fri, 06 Jan 2023 04:10:51 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                username: test
+                iat: 1672974715
+  /user:
+    get:
+      tags:
+        - v1 > User
+      summary: /api/user
+      description: 모든 사용자를 조회합니다. 파라미터 limit값을 사용하여 원하는 수의 사용자 데이터를 조회할수도 있습니다.
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          description: 제한 목록 수 만큼 조회합니다.
+          example: '6'
+        - name: name
+          in: query
+          schema:
+            type: string
+          description: 사용자 이름 (검색조건)
+          example: Linda
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '326'
+            Date:
+              schema:
+                type: string
+                example: Fri, 06 Jan 2023 04:03:45 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                example-0:
+                  summary: /api/user (success)
+                  value:
+                    ok: true
+                    payload:
+                      - id: 1
+                        uid: test
+                        pw: '1234'
+                        name: kimson
+                        nickname: thor
+                        birth: '2023-01-05T01:19:02.000Z'
+                        gender: 1
+                        phone: 123-123-123
+                        email: test@naver.com
+                        region: korea
+                        address: seoul
+                        sign_in_path: naver.com
+                        created_at: '2023-01-05T01:19:02.000Z'
+                        updated_at: '2023-01-05T01:19:02.000Z'
+                example-1:
+                  summary: /api/user (success exact=true)
+                  value:
+                    ok: true
+                    payload: []
+                example-2:
+                  summary: /api/user (success exact=false)
+                  value:
+                    ok: true
+                    payload:
+                      - id: 2
+                        uid: j
+                        pw: >-
+                          $2b$10$vntp4WuowG.r/gxyW.wtxODJsQ//oFRwfiuJCJ9aypOZMDH5YI7cW
+                        name: Linda Senger Jr.
+                        nickname: tommy4
+                        birth: '1993-11-24T15:00:00.000Z'
+                        gender: 1
+                        phone: 111-1111-1111
+                        email: test@naver.com
+                        region: korea
+                        address: korea
+                        sign_in_path: naver.com
+                        created_at: '2023-01-16T16:39:22.000Z'
+                        updated_at: '2023-01-16T16:39:22.000Z'
+                        pregnancy: null
+                        term: null
+                        setting: null
+    post:
+      tags:
+        - v1 > User
+      summary: /api/user
+      description: 사용자의 회원가입 처리를 합니다.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: '{{$randomFullName}}'
+                uid:
+                  type: string
+                  example: '{{$randomAlphaNumeric}}'
+                pw:
+                  type: integer
+                  example: '1234'
+                nickname:
+                  type: string
+                  example: tommy4
+                birth:
+                  type: string
+                  example: '1993-11-25'
+                gender:
+                  type: integer
+                  example: '1'
+                phone:
+                  type: string
+                  example: 111-1111-1111
+                email:
+                  type: string
+                  example: test@naver.com
+                address:
+                  type: string
+                  example: korea
+                region:
+                  type: string
+                  example: korea
+                sign_in_path:
+                  type: string
+                  example: naver.com
+                setting[volume]:
+                  type: boolean
+                  example: 'true'
+                setting[tutorial]:
+                  type: boolean
+                  example: 'true'
+                setting.user_id:
+                  type: integer
+                  example: '2'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Fri, 06 Jan 2023 09:31:07 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+        '400':
+          description: Bad Request
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '47'
+            Date:
+              schema:
+                type: string
+                example: Mon, 09 Jan 2023 02:06:53 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                code: 400
+                message: Bad Request
+        '409':
+          description: Conflict
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '34'
+            Date:
+              schema:
+                type: string
+                example: Fri, 06 Jan 2023 09:36:07 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                message: Duplicate
+  /user/{id}:
+    get:
+      tags:
+        - v1 > User
+      summary: /api/user/:id
+      description: 사용자 id로 특정 사용자를 단건 조회합니다.
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          description: 사용자 PK
+          example: '3'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '324'
+            Date:
+              schema:
+                type: string
+                example: Fri, 06 Jan 2023 04:08:30 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                example-0:
+                  summary: /api/user/:id (success)
+                  value:
+                    ok: true
+                    payload:
+                      id: 1
+                      uid: test
+                      pw: '1234'
+                      name: kimson
+                      nickname: thor
+                      birth: '2023-01-05T01:19:02.000Z'
+                      gender: 1
+                      phone: 123-123-123
+                      email: test@naver.com
+                      region: korea
+                      address: seoul
+                      sign_in_path: naver.com
+                      created_at: '2023-01-05T01:19:02.000Z'
+                      updated_at: '2023-01-05T01:19:02.000Z'
+                example-1:
+                  summary: /api/user/:id (fail)
+                  value:
+                    ok: false
+                    message: 'not found user by id: 2'
+    put:
+      tags:
+        - v1 > User
+      summary: /api/user/:id
+      description: 특정 사용자의 정보를 수정합니다.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                nickname:
+                  type: string
+                  example: tomcat2
+                birth:
+                  type: string
+                  example: '1993-11-25'
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          description: 사용자 PK
+          example: '5'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Fri, 06 Jan 2023 09:31:35 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+    delete:
+      tags:
+        - v1 > User
+      summary: /api/user/:id
+      description: 특정 사용자를 삭제합니다.
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          description: 사용자 PK
+          example: '1'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Sat, 07 Jan 2023 08:57:05 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            text/plain:
+              schema:
+                type: string
+              examples:
+                example-0:
+                  summary: /api/user/:id (success)
+                  value: "{\r\n    \"ok\": true\r\n}"
+                example-1:
+                  summary: /api/user/:id
+                  value: "{\r\n    \"ok\": true,\r\n    \"code\": 404,\r\n    \"message\": \"not found entity by id: 1\",\r\n    \"state\": {\r\n        \"ok\": true,\r\n        \"code\": 200\r\n    }\r\n}"
+  /user/{id}/children:
+    get:
+      tags:
+        - v1 > User
+      summary: /api/user/:id/children
+      description: 특정 사용자의 자녀에 대한 정보를 조회합니다.
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          description: 사용자 PK
+          example: '1'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '109'
+            Date:
+              schema:
+                type: string
+                example: Sat, 07 Jan 2023 08:45:22 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: "{\r\n  \"ok\": true,\r\n  \"payload\": [\r\n    {\r\n      \"id\": 1,\r\n      \"name\": \"kim tommy\",\r\n      \"gender\": 1,\r\n      \"birth\": \"2023-01-05T08:10:41.000Z\",\r\n      \"user_id\": 1\r\n    }\r\n  ]\r\n}"
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '59'
+            Date:
+              schema:
+                type: string
+                example: Sat, 07 Jan 2023 08:48:04 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: "{\r\n  \"ok\": false,\r\n  \"code\": 404,\r\n  \"message\": \"not found user by id: 3\"\r\n}"
+  /user/{id}/board:
+    get:
+      tags:
+        - v1 > User
+      summary: /api/user/:id/board
+      description: 특정 사용자의 게시글을 조회합니다.
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '1'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '24'
+            Date:
+              schema:
+                type: string
+                example: Sat, 07 Jan 2023 08:46:33 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: '{"ok":true,"payload":[]}'
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '59'
+            Date:
+              schema:
+                type: string
+                example: Sat, 07 Jan 2023 08:46:17 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: '{"ok":false,"code":404,"message":"not found user by id: 3"}'
+  /user/signup:
+    post:
+      tags:
+        - v1 > User
+      summary: /api/user/signin
+      description: 로그인을 처리합니다.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: test@naver.com
+                password:
+                  type: integer
+                  example: '1234'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '462'
+            Date:
+              schema:
+                type: string
+                example: Fri, 06 Jan 2023 04:10:39 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+                payload:
+                  token: >-
+                    eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QiLCJpYXQiOjE2NzI5NzgyMzl9.FaFEsQi0WGtVkstUOsmKXkYam_NmjUPx_WpJlGSghoF3eshYzcdc4qZ1ITOwH_qQOv_mwDdxIrmn4GWmdTaM5LwixAvIC_s8qR8FsKtI8vt1pq9vcpTo834TPJF3h0DoIGRpA5z3j40ACutRYs1tEU2xBx28fBWIBFXm99yUFednhUPVkh_CGejA6uPJghOePp55EAGxkUzEsCQUrt236i4IAIVqZm-pwXk4HlRONCyPekE9ji_48N1fq_l4pAQwcXE0EBJXf7TO5ClWbj0RaBqeNPnPZ_Rmipgbekd8N6FnVtJbrnJlxfJsKmDBEZKBkDElvwjvZWl582Is7kNaUg
+  /board:
+    get:
+      tags:
+        - v1 > Board
+      summary: /api/board
+      description: 모든 게시글을 조회합니다. 파라미터로 limit값을 사용하여 원하는 수의 게시글 데이터를 조회할수도 있습니다.
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          description: 제한 목록 수 만큼 조회합니다.
+          example: '5'
+        - name: title
+          in: query
+          schema:
+            type: string
+          description: 제목 (검색조건)
+          example: test
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '228'
+            Date:
+              schema:
+                type: string
+                example: Sat, 07 Jan 2023 09:47:27 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: "{\r\n    \"ok\": true,\r\n    \"payload\": [\r\n        {\r\n            \"id\": 1,\r\n            \"title\": \"update title\",\r\n            \"contents\": \"test content\",\r\n            \"category1\": \"notice\",\r\n            \"category2\": \"alert\",\r\n            \"role\": \"user\",\r\n            \"created_at\": \"2023-01-07T00:37:02.000Z\",\r\n            \"updated_at\": \"2023-01-07T00:47:05.000Z\",\r\n            \"user_id\": 2\r\n        }\r\n    ]\r\n}"
+            application/json:
+              schema:
+                type: object
+              examples:
+                example-0:
+                  summary: /api/board (success exact=true)
+                  value:
+                    ok: true
+                    payload: []
+                example-1:
+                  summary: /api/board (success exact=false)
+                  value:
+                    ok: true
+                    payload:
+                      - id: 1
+                        title: test title
+                        contents: test content
+                        category1: cate1
+                        category2: cate2
+                        role: user
+                        user_id: 1
+                        created_at: '2023-01-16T16:25:01.000Z'
+                        updated_at: '2023-01-16T16:25:01.000Z'
+    post:
+      tags:
+        - v1 > Board
+      summary: /api/board
+      description: 게시글을 작성합니다.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                  example: '2'
+                title:
+                  type: string
+                  example: '{{$randomLoremWord}}'
+                contents:
+                  type: string
+                  example: '{{$randomLoremText}}'
+                category1:
+                  type: string
+                  example: '{{$randomLoremSlug}}'
+                category2:
+                  type: string
+                  example: '{{$randomLoremSlug}}'
+                role:
+                  type: string
+                  example: user
+      responses:
+        '201':
+          description: Created
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Sat, 07 Jan 2023 09:37:02 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: "{\r\n    \"ok\": true\r\n}"
+        '400':
+          description: Bad Request
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '36'
+            Date:
+              schema:
+                type: string
+                example: Sat, 07 Jan 2023 09:38:53 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: "{\r\n    \"ok\": false,\r\n    \"message\": \"Bad Request\"\r\n}"
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '48'
+            Date:
+              schema:
+                type: string
+                example: Sat, 07 Jan 2023 09:38:24 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: "{\r\n    \"ok\": false,\r\n    \"message\": \"not found user by id: 1\"\r\n}"
+  /board/{id}:
+    get:
+      tags:
+        - v1 > Board
+      summary: /api/board/:id
+      description: 게시글 id로 특정 게시글을 단건 조회합니다.
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          description: 게시판 PK
+          example: '2'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '220'
+            Date:
+              schema:
+                type: string
+                example: Sat, 07 Jan 2023 09:39:29 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: "{\r\n    \"ok\": true,\r\n    \"payload\": [\r\n        {\r\n            \"id\": 1,\r\n            \"title\": \"test\",\r\n            \"contents\": \"test content\",\r\n            \"category1\": \"notice\",\r\n            \"category2\": \"alert\",\r\n            \"role\": \"user\",\r\n            \"created_at\": \"2023-01-07T00:37:02.000Z\",\r\n            \"updated_at\": \"2023-01-07T00:37:02.000Z\",\r\n            \"user_id\": 2\r\n        }\r\n    ]\r\n}"
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '59'
+            Date:
+              schema:
+                type: string
+                example: Sat, 07 Jan 2023 09:45:54 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: "{\r\n    \"ok\": false,\r\n    \"code\": 404,\r\n    \"message\": \"not found user by id: 2\"\r\n}"
+    put:
+      tags:
+        - v1 > Board
+      summary: /api/board/:id
+      description: 특정 게시글을 수정합니다.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                titles:
+                  type: string
+                  example: update title
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          description: 게시판 PK
+          example: '2'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Sat, 07 Jan 2023 09:47:05 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: "{\r\n    \"ok\": true\r\n}"
+        '400':
+          description: Bad Request
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '47'
+            Date:
+              schema:
+                type: string
+                example: Mon, 09 Jan 2023 03:59:47 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                code: 400
+                message: Bad Request
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '50'
+            Date:
+              schema:
+                type: string
+                example: Mon, 09 Jan 2023 02:40:28 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                message: 'not found entity by id: 1'
+    delete:
+      tags:
+        - v1 > Board
+      summary: /api/board/:id
+      description: 특정 게시글을 삭제합니다.
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          description: 게시판 PK
+          example: '1'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Sat, 07 Jan 2023 09:49:35 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: "{\r\n    \"ok\": true\r\n}"
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '50'
+            Date:
+              schema:
+                type: string
+                example: Sat, 07 Jan 2023 09:49:18 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: "{\r\n    \"ok\": false,\r\n    \"message\": \"not found entity by id: 2\"\r\n}"
+  /board/user/{id}:
+    get:
+      tags:
+        - v1 > Board
+      summary: /api/board/user/:id
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          description: 사용자 PK
+          example: '2'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '223'
+            Date:
+              schema:
+                type: string
+                example: Wed, 11 Jan 2023 09:40:11 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+                payload:
+                  id: 1
+                  title: test title
+                  contents: test content
+                  category1: cate1
+                  category2: cate2
+                  role: user
+                  user_id: 1
+                  created_at: '2023-01-11T00:40:07.000Z'
+                  updated_at: '2023-01-11T00:40:07.000Z'
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '61'
+            Date:
+              schema:
+                type: string
+                example: Wed, 11 Jan 2023 09:40:28 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                code: 404
+                message: 'not found entity by id: 2'
+  /banword:
+    get:
+      tags:
+        - v1 > Banned_word
+      summary: /api/banword
+      description: |-
+        StartFragment
+
+        모든 금지어를 조회합니다. 파라미터 limit값을 사용하여 원하는 수의 금지어 데이터를 조회할수도 있습니다.
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          description: 제한 목록 수 만큼 조회합니다.
+          example: '5'
+        - name: word
+          in: query
+          schema:
+            type: string
+          description: 단어 (검색조건)
+          example: 아
+        - name: exact
+          in: query
+          schema:
+            type: boolean
+          description: 검색 정확성 여부
+          example: 'true'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '48'
+            Date:
+              schema:
+                type: string
+                example: Sat, 07 Jan 2023 09:20:08 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: "{\r\n    \"ok\": true,\r\n    \"payload\": [\r\n        {\r\n            \"id\": 2,\r\n            \"word\": \"말콤\"\r\n        }\r\n    ]\r\n}"
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+                payload: []
+    post:
+      tags:
+        - v1 > Banned_word
+      summary: /api/banword
+      description: 금지어를 추가합니다.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                word:
+                  type: string
+                  example: 말콤
+      responses:
+        '201':
+          description: Created
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Sat, 07 Jan 2023 09:18:08 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: "{\r\n    \"ok\": true\r\n}"
+  /banword/{id}:
+    delete:
+      tags:
+        - v1 > Banned_word
+      summary: /api/banword/:id
+      description: 특정 금지어를 삭제합니다.
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          description: 금지어 PK
+          example: '1'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Sat, 07 Jan 2023 09:19:33 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: "{\r\n    \"ok\": true\r\n}"
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '48'
+            Date:
+              schema:
+                type: string
+                example: Sat, 07 Jan 2023 09:21:24 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: "{\r\n    \"ok\": false,\r\n    \"message\": \"not found entity by id: 1\"\r\n}"
+  /avatar:
+    get:
+      tags:
+        - v1 > Avatar
+      summary: /api/avatar
+      description: 모든 사용자 아바타를 조회합니다.
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          description: 검색 제한
+          example: '5'
+        - name: cloth_bottom
+          in: query
+          schema:
+            type: integer
+          description: 하의 아이템 PK
+          example: '2'
+        - name: cloth_top
+          in: query
+          schema:
+            type: integer
+          description: 상의 아이템 PK
+          example: '1'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '105'
+            Date:
+              schema:
+                type: string
+                example: Tue, 17 Jan 2023 05:05:37 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+                payload:
+                  - id: 1
+                    character: 기본아바타
+                    cloth_top: 1
+                    cloth_bottom: 2
+                    user_id: 1
+    post:
+      tags:
+        - v1 > Avatar
+      summary: /api/avatar
+      description: 사용자 아바타를 생성합니다.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                character:
+                  type: string
+                  description: 아바타 이름
+                  example: green_man
+                cloth_top:
+                  type: integer
+                  description: 상의 아이템 PK
+                  example: '1'
+                cloth_bottom:
+                  type: integer
+                  description: 하의 아이템 PK
+                  example: '2'
+                user_id:
+                  type: integer
+                  description: 사용자 PK
+                  example: '3'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Tue, 17 Jan 2023 05:11:44 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+        '409':
+          description: Conflict
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '45'
+            Date:
+              schema:
+                type: string
+                example: Tue, 17 Jan 2023 05:11:57 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                code: 409
+                message: Duplicate
+        '500':
+          description: Internal Server Error
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '57'
+            Date:
+              schema:
+                type: string
+                example: Tue, 17 Jan 2023 05:12:11 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                code: 500
+                message: Internal Server Error
+  /avatar/{id}:
+    get:
+      tags:
+        - v1 > Avatar
+      summary: /api/avatar/:id
+      description: 사용자 아바타를 단건 조회합니다.
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          description: 아바타 PK
+          example: '12'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '103'
+            Date:
+              schema:
+                type: string
+                example: Tue, 17 Jan 2023 05:07:13 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+                payload:
+                  id: 1
+                  character: 기본아바타
+                  cloth_top: 1
+                  cloth_bottom: 2
+                  user_id: 1
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '62'
+            Date:
+              schema:
+                type: string
+                example: Tue, 17 Jan 2023 05:07:45 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                code: 404
+                message: 'not found entity by id: 12'
+    put:
+      tags:
+        - v1 > Avatar
+      summary: /api/avatar/:id
+      description: 특정 아바타 정보를 수정합니다.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                character:
+                  type: string
+                  example: 특수아바타
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '1'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Wed, 11 Jan 2023 09:44:57 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+    delete:
+      tags:
+        - v1 > Avatar
+      summary: /api/avatar/:id
+      description: 특정 아바타 정보를 삭제합니다.
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          description: 아바타 PK
+          example: '12'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Tue, 17 Jan 2023 05:14:31 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '51'
+            Date:
+              schema:
+                type: string
+                example: Tue, 17 Jan 2023 05:14:43 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                message: 'not found entity by id: 12'
+  /items:
+    get:
+      tags:
+        - v1 > Items
+      summary: /api/items
+      description: 모든 아이템 데이터를 조회합니다. 파라미터 limit값을 사용하여 원하는 수의 아이템 데이터를 조회할수도 있습니다.
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          description: 제한 목록 수 만큼 조회합니다.
+          example: '5'
+        - name: name
+          in: query
+          schema:
+            type: string
+          description: 아이템 이름 (검색조건)
+          example: 낡은
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '295'
+            Date:
+              schema:
+                type: string
+                example: Wed, 11 Jan 2023 07:36:51 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                example-0:
+                  summary: /v1/api/items (success)
+                  value:
+                    ok: true
+                    payload:
+                      - id: 1
+                        name: 낡아버린 티셔츠
+                        cloth_place: top
+                        info: 구매 후 한 번도 입지 못하고 낡아버린 티셔츠이다.
+                      - id: 2
+                        name: 낡은 바지
+                        cloth_place: bottom
+                        info: 구매 후 한 번도 입지 못하고 낡아버린 티셔츠이다.
+                example-1:
+                  summary: /api/items (success exact=true)
+                  value:
+                    ok: true
+                    payload:
+                      - id: 2
+                        name: 낡은 바지
+                        cloth_place: bottom
+                        info: 낡고 낡은 바지이다
+                example-2:
+                  summary: /api/items (success exact=false)
+                  value:
+                    ok: true
+                    payload:
+                      - id: 2
+                        name: 낡은 바지
+                        cloth_place: bottom
+                        info: 낡고 낡은 바지이다
+                      - id: 1
+                        name: 낡은 셔츠
+                        cloth_place: top
+                        info: 낡고 낡은 티셔츠이다
+    post:
+      tags:
+        - v1 > Items
+      summary: /api/items
+      description: 아이템 정보를 추가합니다.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: 낡은 바지3
+                cloth_place:
+                  type: string
+                  example: bottom
+                info:
+                  type: string
+                  example: 구매 후 한 번도 입지 못하고 낡아버린 티셔츠이다.
+      responses:
+        '201':
+          description: Created
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Wed, 11 Jan 2023 07:34:34 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+  /items/{id}:
+    get:
+      tags:
+        - v1 > Items
+      summary: /api/items/:id
+      description: 아이템 id로 특정 아이템을 단건 조회합니다.
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          description: 아이템 PK
+          example: '1'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '154'
+            Date:
+              schema:
+                type: string
+                example: Wed, 11 Jan 2023 07:35:09 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                example-0:
+                  summary: /api/items/:id (success)
+                  value:
+                    ok: true
+                    payload:
+                      id: 1
+                      name: 낡은 티셔츠
+                      cloth_place: top
+                      info: 구매 후 한 번도 입지 못하고 낡아버린 티셔츠이다.
+                example-1:
+                  summary: /api/items/:id (success after change name column)
+                  value:
+                    ok: true
+                    payload:
+                      id: 1
+                      name: 낡아버린 티셔츠
+                      cloth_place: top
+                      info: 구매 후 한 번도 입지 못하고 낡아버린 티셔츠이다.
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '61'
+            Date:
+              schema:
+                type: string
+                example: Wed, 11 Jan 2023 07:34:59 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                code: 404
+                message: 'not found entity by id: 2'
+    put:
+      tags:
+        - v1 > Items
+      summary: /api/items/:id
+      description: 특정 아이템 정보를 수정합니다.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: 낡아버린 티셔츠
+                '':
+                  type: string
+                  description: 아이템 PK
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '1'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Wed, 11 Jan 2023 07:35:50 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+    delete:
+      tags:
+        - v1 > Items
+      summary: /api/items/:id
+      description: 특정 아이템 정보를 삭제합니다.
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          description: 아이템 PK
+          example: '3'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Wed, 11 Jan 2023 07:36:57 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '50'
+            Date:
+              schema:
+                type: string
+                example: Wed, 11 Jan 2023 07:37:08 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                message: 'not found entity by id: 3'
+  /myitem:
+    get:
+      tags:
+        - v1 > MyItem
+      summary: /api/myitem
+      description: >-
+        사용자의 모든 아이템 데이터를 조회합니다. 파라미터 limit값을 사용하여 원하는 수의 사용자자아이템 데이터를 조회할수도
+        있습니다.
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          description: 제한 목록 수 만큼 조회합니다.
+          example: '5'
+        - name: user_id
+          in: query
+          schema:
+            type: integer
+          description: 유저 PK (검색조건)
+          example: '1'
+        - name: exact
+          in: query
+          schema:
+            type: boolean
+          description: 검색 정확성 여부
+          example: 'true'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '91'
+            Date:
+              schema:
+                type: string
+                example: Wed, 11 Jan 2023 10:12:29 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                example-0:
+                  summary: /api/myitem (success)
+                  value:
+                    ok: true
+                    payload:
+                      - id: 1
+                        items_id: 1
+                        user_id: 1
+                      - id: 2
+                        items_id: 2
+                        user_id: 1
+                example-1:
+                  summary: /api/myitem (success exact=true)
+                  value:
+                    ok: true
+                    payload:
+                      - id: 1
+                        items_id: 1
+                        user_id: 1
+    post:
+      tags:
+        - v1 > MyItem
+      summary: /api/myitem
+      description: 사용자의 아이템을 추가합니다.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                  example: '1'
+                items_id:
+                  type: integer
+                  example: '5'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Wed, 11 Jan 2023 10:15:43 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+        '400':
+          description: Bad Request
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '47'
+            Date:
+              schema:
+                type: string
+                example: Wed, 11 Jan 2023 10:14:03 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                code: 400
+                message: Bad Request
+  /myitem/{id}:
+    get:
+      tags:
+        - v1 > MyItem
+      summary: /api/myitem:id
+      description: 특정 사용자가 가진 아이템을 조회합니다.
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          description: 사용자 아이템 PK
+          example: '3'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '55'
+            Date:
+              schema:
+                type: string
+                example: Wed, 11 Jan 2023 10:12:49 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+                payload:
+                  id: 1
+                  items_id: 1
+                  user_id: 1
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '61'
+            Date:
+              schema:
+                type: string
+                example: Wed, 11 Jan 2023 10:13:06 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                code: 404
+                message: 'not found entity by id: 3'
+    put:
+      tags:
+        - v1 > MyItem
+      summary: /api/myitem/:id
+      description: 사용자의 특정 아이템을 수정합니다.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                items_id:
+                  type: integer
+                  example: '5'
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          description: 사용자 아이템 PK
+          example: '23'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Wed, 11 Jan 2023 10:17:49 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '62'
+            Date:
+              schema:
+                type: string
+                example: Wed, 11 Jan 2023 10:19:01 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                code: 404
+                message: 'not found entity by id: 23'
+        '500':
+          description: Internal Server Error
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '57'
+            Date:
+              schema:
+                type: string
+                example: Wed, 11 Jan 2023 10:18:28 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                code: 500
+                message: Internal Server Error
+    delete:
+      tags:
+        - v1 > MyItem
+      summary: /api/myitem/:id
+      description: 사용자가 가진 특정 아이템을 삭제합니다.
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          description: 사용자 아이템 PK
+          example: '2'
+      responses:
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '50'
+            Date:
+              schema:
+                type: string
+                example: Wed, 11 Jan 2023 10:01:49 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                message: 'not found entity by id: 6'
+  /setting:
+    get:
+      tags:
+        - v1 > Setting
+      summary: /api/setting
+      description: 모든 사용자의 세팅 정보를 조회합니다.
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          example: '1'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '76'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:02:29 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+                payload:
+                  - id: 1
+                    volume: false
+                    tutorial: false
+                    user_id: 1
+        '500':
+          description: Internal Server Error
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '57'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:28:04 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                code: 500
+                message: Internal Server Error
+    post:
+      tags:
+        - v1 > Setting
+      summary: /api/setting
+      description: 사용자 세팅 정보를 추가합니다.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                volume:
+                  type: boolean
+                  example: 'true'
+                tutorial:
+                  type: boolean
+                  example: 'true'
+                user_id:
+                  type: integer
+                  example: '1'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:02:17 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+        '409':
+          description: Conflict
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '45'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:00:57 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                code: 409
+                message: Duplicate
+  /setting/{id}:
+    get:
+      tags:
+        - v1 > Setting
+      summary: /api/setting/:id
+      description: 특정 사용자의 세팅정보를 단건 조회합니다.
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '1'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '74'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:02:45 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+                payload:
+                  id: 1
+                  volume: false
+                  tutorial: false
+                  user_id: 1
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '61'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 09:46:39 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                code: 404
+                message: 'not found entity by id: 1'
+    put:
+      tags:
+        - v1 > Setting
+      summary: /api/setting/:id
+      description: 사용자 세팅 정보를 수정합니다.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                volume:
+                  type: boolean
+                  example: 'false'
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '3'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:03:34 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '61'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:21:26 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                code: 404
+                message: 'not found entity by id: 3'
+    delete:
+      tags:
+        - v1 > Setting
+      summary: /api/setting/:id
+      description: 사용자 세팅 정보를 삭제합니다.
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '3'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:19:08 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '50'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:19:16 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                message: 'not found entity by id: 1'
+  /terms:
+    get:
+      tags:
+        - v1 > Terms
+      summary: /api/terms
+      description: >-
+        모든 사용자의 이용약관 데이터를 조회합니다. 파라미터 limit값을 사용하여 원하는 수의 사용자 이용약관관 데이터를 조회할수도
+        있습니다
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '110'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:27:06 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+                payload:
+                  - id: 1
+                    over_14: true
+                    service: true
+                    personal: true
+                    third_party: false
+                    user_id: 1
+    post:
+      tags:
+        - v1 > Terms
+      summary: /api/terms
+      description: 사용자 이용약관을 추가합니다.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                  example: '1'
+                over_14:
+                  type: boolean
+                  example: 'true'
+                service:
+                  type: boolean
+                  example: 'true'
+                personal:
+                  type: boolean
+                  example: 'true'
+                third_party:
+                  type: boolean
+                  example: 'false'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:26:30 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+  /terms/{id}:
+    get:
+      tags:
+        - v1 > Terms
+      summary: /api/terms/:id
+      description: 특정 사용자의 이용약관을 단건 조회합니다.
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          description: 이용약관 PK
+          example: '1'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '108'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:27:16 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+                payload:
+                  id: 1
+                  over_14: true
+                  service: true
+                  personal: true
+                  third_party: false
+                  user_id: 1
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '62'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:27:26 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                code: 404
+                message: 'not found entity by id: 12'
+    put:
+      tags:
+        - v1 > Terms
+      summary: /api/terms/:id
+      description: 사용자 이용약관을 수정합니다.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                third_party:
+                  type: boolean
+                  example: 'true'
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          description: 이용약관 PK
+          example: '1'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:28:55 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+    delete:
+      tags:
+        - v1 > Terms
+      summary: /api/terms/:id
+      description: 사용자 이용약관을 삭제합니다.
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          description: 이용약관 PK
+          example: '1'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:29:23 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+  /pregnancy:
+    get:
+      tags:
+        - v1 > Pregnancy
+      summary: /api/pregnancy
+      description: 모든 사용자의 임신여부를 조회합니다.
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '93'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:33:57 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+                payload:
+                  - id: 1
+                    month: 11
+                    baby_due: '2023-01-12T01:02:09.000Z'
+                    user_id: 1
+    post:
+      tags:
+        - v1 > Pregnancy
+      summary: /api/pregnancy
+      description: 사용자의 임신여부 정보를 등록합니다.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                month:
+                  type: integer
+                  example: '2'
+                baby_due:
+                  type: string
+                  example: '2020-01-12'
+                user_id:
+                  type: integer
+                  example: '1'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:36:27 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+        '409':
+          description: Conflict
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '45'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:35:36 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                code: 409
+                message: Duplicate
+  /pregnancy/{id}:
+    get:
+      tags:
+        - v1 > Pregnancy
+      summary: /api/pregnancy/:id
+      description: 특정 사용자의 임신여부 정보를 단건 조회합니다.
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          description: 임신여부 PK
+          example: '12'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '91'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:34:12 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+                payload:
+                  id: 1
+                  month: 11
+                  baby_due: '2023-01-12T01:02:09.000Z'
+                  user_id: 1
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '62'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:34:21 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                code: 404
+                message: 'not found entity by id: 12'
+    put:
+      tags:
+        - v1 > Pregnancy
+      summary: /api/pregnancy/:id
+      description: 사용자 임신여부 정보를 수정합니다.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                month:
+                  type: integer
+                  example: '10'
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          description: 임신여부 PK
+          example: '3'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:37:33 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '61'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:37:20 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                code: 404
+                message: 'not found entity by id: 1'
+    delete:
+      tags:
+        - v1 > Pregnancy
+      summary: /api/pregnancy/:id
+      description: 사용자 임신여부 정보를 삭제합니다.
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          description: 임신여부 PK
+          example: '12'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:35:50 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '51'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:35:59 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                message: 'not found entity by id: 12'
+  /children:
+    get:
+      tags:
+        - v1 > Children
+      summary: /api/children
+      description: 모든 사용자 자녀 정보를 조회합니다.
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '109'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:42:29 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+                payload:
+                  - id: 1
+                    name: kim tommy
+                    gender: 1
+                    birth: '2023-01-12T01:02:09.000Z'
+                    user_id: 1
+    post:
+      tags:
+        - v1 > Children
+      summary: /api/children
+      description: 사용자 자녀 정보를 등록합니다.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: sophia
+                gender:
+                  type: integer
+                  example: '0'
+                birth:
+                  type: string
+                  example: '2012-03-07'
+                user_id:
+                  type: integer
+                  example: '1'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:43:30 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+  /children/{id}:
+    get:
+      tags:
+        - v1 > Children
+      summary: /api/children/:id
+      description: 특정 사용자 자녀 정보를 단건 조회합니다.
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '1'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '107'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:42:44 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+                payload:
+                  id: 1
+                  name: kim tommy
+                  gender: 1
+                  birth: '2023-01-12T01:02:09.000Z'
+                  user_id: 1
+    put:
+      tags:
+        - v1 > Children
+      summary: /api/children/:id
+      description: 사용자 자녀 정보를 수정합니다.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: sophy
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '2'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:48:04 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '61'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:47:38 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                code: 404
+                message: 'not found entity by id: 3'
+    delete:
+      tags:
+        - v1 > Children
+      summary: /api/children/:id
+      description: 사용자 자녀 정보를 삭제합니다.
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '2'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:48:37 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '51'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:48:46 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                message: 'not found entity by id: 23'
+  /children/user/{id}:
+    get:
+      tags:
+        - v1 > Children
+      summary: /api/children/user/:id
+      description: 특정 사용자 자녀 정보를 모두두 조회합니다.
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '1'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '192'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:45:23 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+                payload:
+                  - id: 1
+                    name: kim tommy
+                    gender: 1
+                    birth: '2023-01-12T01:02:09.000Z'
+                    user_id: 1
+                  - id: 2
+                    name: sophia
+                    gender: 0
+                    birth: '2012-03-06T15:00:00.000Z'
+                    user_id: 1
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '62'
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Jan 2023 10:46:46 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                code: 404
+                message: 'not found entity by id: 12'
+  /classroom:
+    get:
+      tags:
+        - v1 > Classroom
+      summary: /api/classroom
+      description: 모든 교실 정보를 조회합니다.
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '305'
+            Date:
+              schema:
+                type: string
+                example: Fri, 13 Jan 2023 10:46:58 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+                payload:
+                  - id: 1
+                    title: 테스트 교실
+                    contents: 테스트 교실 내용
+                    start: '2023-01-12T01:02:09.000Z'
+                    end: '2023-01-12T01:02:09.000Z'
+                    howto: 어떻게 교실 신청 어쩌고
+                    class_limit: 50
+                    created_at: '2023-01-12T01:02:09.000Z'
+                    updated_at: '2023-01-12T01:02:09.000Z'
+                  - id: 2
+                    title: 제목제목
+                    contents: 내용내용
+                    start: '2023-01-02T15:00:00.000Z'
+                    end: '2023-01-12T15:00:00.000Z'
+                    howto: 어떻게 신청하는지
+                    class_limit: 50
+                    created_at: '2023-01-13T01:48:56.000Z'
+                    updated_at: '2023-01-13T01:48:56.000Z'
+    post:
+      tags:
+        - v1 > Classroom
+      summary: /api/classroom
+      description: 교실 정보를 추가합니다.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: 제목제목
+                contents:
+                  type: string
+                  example: 내용내용
+                start:
+                  type: string
+                  example: '2023-01-03'
+                end:
+                  type: string
+                  example: '2023-01-13'
+                howto:
+                  type: string
+                  example: 어떻게 신청하는지
+                class_limit:
+                  type: integer
+                  example: '50'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Fri, 13 Jan 2023 10:48:56 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+  /classroom/{id}:
+    get:
+      tags:
+        - v1 > Classroom
+      summary: /api/classroom/:id
+      description: 특정 교실 정보를 단건 조회합니다.
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '12'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '303'
+            Date:
+              schema:
+                type: string
+                example: Fri, 13 Jan 2023 10:47:12 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+                payload:
+                  id: 1
+                  title: 테스트 교실
+                  contents: 테스트 교실 내용
+                  start: '2023-01-12T01:02:09.000Z'
+                  end: '2023-01-12T01:02:09.000Z'
+                  howto: 어떻게 교실 신청 어쩌고
+                  class_limit: 50
+                  created_at: '2023-01-12T01:02:09.000Z'
+                  updated_at: '2023-01-12T01:02:09.000Z'
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '62'
+            Date:
+              schema:
+                type: string
+                example: Fri, 13 Jan 2023 10:47:23 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                code: 404
+                message: 'not found entity by id: 12'
+    put:
+      tags:
+        - v1 > Classroom
+      summary: /api/classroom/:id
+      description: 특정 교실 정보를 수정합니다.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: 000 교실
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '23'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Fri, 13 Jan 2023 10:49:33 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '62'
+            Date:
+              schema:
+                type: string
+                example: Fri, 13 Jan 2023 10:49:45 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                code: 404
+                message: 'not found entity by id: 23'
+    delete:
+      tags:
+        - v1 > Classroom
+      summary: /api/classroom/:id
+      description: 특정 교실 정보를 삭제합니다.
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '23'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Fri, 13 Jan 2023 10:50:00 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '51'
+            Date:
+              schema:
+                type: string
+                example: Fri, 13 Jan 2023 10:50:09 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                message: 'not found entity by id: 23'
+  /classmate:
+    get:
+      tags:
+        - v1 > ClassMate
+      summary: /api/classmate
+      description: 모든 신청청교실 정보를 조회합니다.
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '158'
+            Date:
+              schema:
+                type: string
+                example: Fri, 13 Jan 2023 10:50:32 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+                payload:
+                  - id: 1
+                    classroom_id: 1
+                    is_winner: true
+                    user_id: 1
+                    created_at: '2023-01-12T01:02:09.000Z'
+                    updated_at: '2023-01-12T01:02:09.000Z'
+    post:
+      tags:
+        - v1 > ClassMate
+      summary: /api/classmate
+      description: 교실신청 정보를 추가합니다.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                  example: '1'
+                classroom_id:
+                  type: integer
+                  example: '1'
+                is_winner:
+                  type: boolean
+                  example: 'false'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Fri, 13 Jan 2023 10:52:41 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+        '409':
+          description: Conflict
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '45'
+            Date:
+              schema:
+                type: string
+                example: Fri, 13 Jan 2023 10:53:51 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                code: 409
+                message: Duplicate
+  /classmate/{id}:
+    get:
+      tags:
+        - v1 > ClassMate
+      summary: /api/classmate/:id
+      description: 교실 id로 특정 교실 신청 정보를 조회합니다.
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '1'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '156'
+            Date:
+              schema:
+                type: string
+                example: Fri, 13 Jan 2023 10:51:39 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+                payload:
+                  id: 1
+                  classroom_id: 1
+                  is_winner: true
+                  user_id: 1
+                  created_at: '2023-01-12T01:02:09.000Z'
+                  updated_at: '2023-01-12T01:02:09.000Z'
+    put:
+      tags:
+        - v1 > ClassMate
+      summary: /api/classmate/:id
+      description: 특정 사용자의 신청한 교실 정보를 신청교실실 id로 수정합니다.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                is_winner:
+                  type: boolean
+                  description: 당첨여부
+                  example: 'true'
+                is_participate:
+                  type: boolean
+                  description: 참가여부 (이후 참가자 검색에 활용)
+                  example: 'true'
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '1'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Fri, 13 Jan 2023 10:54:22 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '62'
+            Date:
+              schema:
+                type: string
+                example: Fri, 13 Jan 2023 10:54:33 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                code: 404
+                message: 'not found entity by id: 12'
+    delete:
+      tags:
+        - v1 > ClassMate
+      summary: /api/classmate/:id
+      description: 특정 교실신청을 취소(삭제)합니다.
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '12'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Fri, 13 Jan 2023 10:54:50 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '51'
+            Date:
+              schema:
+                type: string
+                example: Fri, 13 Jan 2023 10:55:01 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                message: 'not found entity by id: 12'
+  /pathinfo:
+    get:
+      tags:
+        - v1 > PathInfo
+      summary: /api/pathinfo
+      description: 사용자의 모든 경로정보를 조회합니다.
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '81'
+            Date:
+              schema:
+                type: string
+                example: Tue, 17 Jan 2023 04:22:55 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+                payload:
+                  - id: 1
+                    user_id: 1
+                    sign_in_path: http://www.daum.net
+    post:
+      tags:
+        - v1 > PathInfo
+      summary: /api/pathinfo
+      description: 사용자 경로 정보를 추가합니다.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                  description: 사용자 PK
+                  example: '1'
+                sign_in_path:
+                  type: string
+                  description: 가입경로
+                  example: http://www.naver.com
+      responses:
+        '201':
+          description: Created
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Tue, 17 Jan 2023 04:21:55 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+        '400':
+          description: Bad Request
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '47'
+            Date:
+              schema:
+                type: string
+                example: Tue, 17 Jan 2023 04:22:09 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                code: 400
+                message: Bad Request
+  /pathinfo/{id}:
+    get:
+      tags:
+        - v1 > PathInfo
+      summary: /api/pathinfo/:id
+      description: 사용자의 경로 정보를 단건 조회합니다.
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '1'
+      responses:
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '61'
+            Date:
+              schema:
+                type: string
+                example: Tue, 17 Jan 2023 04:03:52 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                code: 404
+                message: 'not found entity by id: 1'
+    put:
+      tags:
+        - v1 > PathInfo
+      summary: /api/pathinfo/:id
+      description: 사용자 경로 정보를 수정합니다.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                sign_in_path:
+                  type: string
+                  example: http://www.daum.net
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '12'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Tue, 17 Jan 2023 04:22:35 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '62'
+            Date:
+              schema:
+                type: string
+                example: Tue, 17 Jan 2023 04:22:45 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                code: 404
+                message: 'not found entity by id: 12'
+    delete:
+      tags:
+        - v1 > PathInfo
+      summary: /api/pathinfo/:id
+      description: 사용자 경로 정보를 삭제합니다.
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '12'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '11'
+            Date:
+              schema:
+                type: string
+                example: Tue, 17 Jan 2023 04:23:07 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: true
+        '404':
+          description: Not Found
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            content-type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            content-length:
+              schema:
+                type: integer
+                example: '51'
+            Date:
+              schema:
+                type: string
+                example: Tue, 17 Jan 2023 04:23:15 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=72
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                ok: false
+                message: 'not found entity by id: 12'
