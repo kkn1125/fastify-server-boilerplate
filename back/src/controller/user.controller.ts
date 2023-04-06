@@ -28,8 +28,6 @@ async function UserController(
         exact = false,
         ...rest
       } = query;
-      console.log(rest);
-      console.log(page);
       return userService.findAll(
         Number(page),
         Number(limit),
