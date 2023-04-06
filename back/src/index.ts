@@ -1,9 +1,10 @@
-import Fastify, { FastifyInstance } from "fastify";
+import type { FastifyInstance } from "fastify";
+import Fastify from "fastify";
 import type { IncomingMessage, ServerResponse } from "http";
 import type { Server } from "http";
 import qs from "qs";
 import { ENV_LOGGER, ENV_LOGGER_TYPE } from "./types/types";
-import { MODE } from "./util/global";
+import { HOST, MODE, PORT } from "./util/global";
 import multipart from "@fastify/multipart";
 import cors from "@fastify/cors";
 import formBody from "@fastify/formbody";
@@ -11,6 +12,9 @@ import mariadb from "./database/mariadb";
 import mariaConf from "./database/maria.conf";
 import { customParser } from "./util/tool";
 import CacheManager, { cacheManager } from "./model/cacheManager";
+import UserController from "./controller/user.controller";
+import SwaggerDocument from "./documentation/document";
+import SwaggerDocumentUI from "./documentation/document.ui";
 
 const envToLogger: ENV_LOGGER = {
   development: {
@@ -109,4 +113,22 @@ server.register(SwaggerDocumentUI);
 
 /* routes */
 const versioning = "v1";
-server.register(userController, { prefix: `/${versioning}/api/user` });
+server.register(UserController, { prefix: `/${versioning}/api/user` });
+
+/* main content */
+server.get("/", async (req, res) => {
+  res.status(200).send("no contents");
+});
+
+// Run the server!
+const start = async () => {
+  try {
+    await server.listen({ host: HOST, port: PORT });
+    await server.ready();
+    server.swagger();
+  } catch (err) {
+    server.log.error(err);
+    process.exit(1);
+  }
+};
+start();

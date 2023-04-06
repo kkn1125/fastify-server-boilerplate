@@ -1,4 +1,4 @@
-import { User } from "../entity/User";
+import User from "../entity/User";
 declare module "fastify" {
   export interface FastifyInstance {
     db: {
@@ -30,19 +30,4 @@ declare function fastifyExpress(
 ): ReturnType<FastifyExpress>;
 export = fastifyExpress;
 
-export declare type DBTables =
-  | "user"
-  | "children"
-  | "ban"
-  | "pregnancy"
-  | "terms"
-  | "setting"
-  | "board"
-  | "avatar"
-  | "items"
-  | "myitem"
-  | "classroom"
-  | "classmate"
-  | "pathinfo"
-  | "files"
-  | "chattings";
+export declare type DBTables = "user";
